@@ -7,26 +7,15 @@
 
     <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
     <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
-    <!-- HTML5のサポートが不完全な、一部の旧式のブラウザに対応するためのコード -->
-    <!--[if lt IE 9]>
-      <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/r29/html5.min.js">
-      </script>
-    <![endif]-->
+    
+    <!-- app/views/layouts/_shim.html.erb というファイルを探して、その内容を評価して結果をビューに挿⼊ -->
+    <%= render 'layouts/shim' %>
+
   </head>
 
   <body>
-    <header class="navbar navbar-fixed-top navbar-inverse">
-      <!-- HTML要素に対して、'class'は何度でも使えるが、'id'はページ内で一度しか使えない。 -->
-      <div class="container">
-        <link_to "Attendance App", '#', id: "logo" %>
-        <nav>
-          <ul class="nav navbar-nav navbar-right">
-            <li><%= link_to "Top", '#' %></li>
-            <li><%= link_to "Log in", '#' %></li>
-          </ul>
-        </nav>
-      </div>
-    </header>
+    <!-- headerの内容がこの1行で収まる -->
+    <%= render 'layouts/header' %>
     <div class="container">
       <%= yield %>
     </div>
