@@ -1,7 +1,9 @@
 class UsersController < ApplicationController
+  before_action :set_user, only: [:show, :edit, :update]
+  before_action :logged_in_user, only: [:show, :edit, :update]
+  before_action :correct_user, only: [:edit, :update]
   
   def show
-    @user = User.find(params[:id])
   end
   
   def new
@@ -20,12 +22,39 @@ class UsersController < ApplicationController
   end
   
   def edit
-    @user = User.find(params[:id])
+  end
+  
+  def update
+    if @user.update_attributes(user_params)
+      flash[:success] = "ユーザー情報を更新しました。"
+      redirect_to @user
+    else
+      render :edit
+    end
   end
   
   private
     # Usersコントローラー内部でのみ実行される
     def user_params
       params.require(:user).permit(:name, :email, :password, :password_confirmation)
+    end
+    
+    # paramsハッシュからユーザーを取得する
+    def set_user
+      @user = User.find(params[:id])
+    end
+    
+    # ログイン済みのユーザーか確認する
+    def logged_in_user
+      unless logged_in?
+       flash[:danger] = "ログインしてください。"
+       redirect_to login_url
+      end
+    end
+    
+    # アクセスしたユーザーが現在ログインしているユーザーか確認する。
+    def correct_user
+      @user = User.find(params[:id])
+      redirect_to(root_url) unless current_user?(@user)
     end
 end
