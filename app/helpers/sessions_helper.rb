@@ -1,5 +1,6 @@
 module SessionsHelper
   
+  # 引数に渡されたユーザーオブジェクトでログインする。
   # ユーザーのブラウザ内にある⼀時的cookiesに暗号化済みのuser.id が⾃動で⽣成される。
   def log_in(user)
     session[:user_id] = user.id
@@ -14,13 +15,14 @@ module SessionsHelper
   
   # 永続的セッションを破棄する
   def forget(user)
-    user.forget  # userモデル参照
+    user.forget # Userモデル参照
     cookies.delete(:user_id)
     cookies.delete(:remember_token)
   end
   
     # セッションと@current_userを破棄する
-  def logout
+  def log_out
+    forget(current_user)
     session.delete(:user_id) # セッションからユーザーIDを削除するdeleteメソッド
     @current_user = nil  # 変数@current_userにnilを代入してユーザーオブジェクトを削除
   end
@@ -47,6 +49,16 @@ module SessionsHelper
   # 現在ログイン中のユーザーがいればtrue、そうでなければfalseを返す
   def logged_in?
     !current_user.nil?
+  end
+  
+  # 記憶しているURL（またはデフォルトURL）にリダイレクトする。
+  def redirect_back_or(default_url)
+    redirect_to(session[:forwarding_url || default_url])
+    session.delete(:forwarding_url)
+  end
+  
+  def store_location
+    session[:forwarding_url] = request.original_url if request.get?
   end
   
 end
