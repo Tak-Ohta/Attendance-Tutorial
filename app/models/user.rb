@@ -1,5 +1,8 @@
 class User < ApplicationRecord
   
+  # 1対多の関係を示す。userが削除された場合、関連する勤怠データも同時に削除する。
+  has_many :attendances, dependent: :destroy
+  
   # 「remember_token」という仮想の属性を作成する。
   attr_accessor :remember_token
   
