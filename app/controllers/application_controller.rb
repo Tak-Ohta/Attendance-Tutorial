@@ -3,6 +3,31 @@ class ApplicationController < ActionController::Base
   include SessionsHelper
   
   $days_of_the_week = %w{日 月 火 水 木 金 土}
+
+  # paramsハッシュからユーザーを取得する
+  def set_user
+    @user = User.find(params[:id])
+  end
+    
+  # ログイン済みのユーザーか確認する
+  def logged_in_user
+    unless logged_in?  
+      store_location
+      flash[:danger] = "ログインしてください。"
+      redirect_to login_url
+    end
+  end  
+    
+  # アクセスしたユーザーが現在ログインしているユーザーか確認する。
+  def correct_user
+    @user = User.find(params[:id])
+    redirect_to(root_url) unless current_user?(@user)
+  end
+    
+  # システム管理者権限を所有しているか判定する。
+  def admin_user
+    redirect_to root_url unless current_user.admin?
+  end
   
   # ページ出力前に1ヶ月分のデータの存在を確認・セットする。
   def set_one_month
